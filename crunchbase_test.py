@@ -14,7 +14,7 @@ def get_uuid():
 	has_next_page = True;
 	page = 75
 	while(has_next_page):
-		url = "https://api.crunchbase.com/v/3/organizations?page=%s&user_key=419d2896eaa2ef4a93bff62ae0af51e8"%page
+		url = "https://api.crunchbase.com/v/3/snapshot/crunchbase_2013_snapshot.tar.gz?user_key=c63e5095fcc5d3f44c40e234ed2050d3"%page
 		url_data = urllib2.urlopen(url)
 		json_obj = json.load(url_data)
 		json_data = json_obj["data"]
@@ -33,50 +33,12 @@ def get_uuid():
 			records_scanned += 1
 			if company_type =="company" and website !=None:
 				uuid=item["uuid"]
-				series_qualifier(uuid,csv_row)
-		page += 1
-		if page > total_no_pages:
-			has_next_page = False
-		
-			#get_info(x,name,website,linkedin,country)
-
-
-def series_qualifier(uuid,csv_row):
-	
-	global uuid_counter
-	url = "https://api.crunchbase.com/v/3/funding-rounds/%s?user_key=419d2896eaa2ef4a93bff62ae0af51e8"%uuid
-	uuid_counter = uuid_counter + 1
-	#time.sleep(7)
-	try:
-		url_data = urllib2.urlopen(url)
-		json_obj = json.load(url_data)
-		if json_obj["data"]["relationships"].has_key("funding_rounds"):
-			if json_obj["data"]["relationships"]["funding_rounds"].has_key("items"):
-				funding_rounds_items = json_obj["data"]["relationships"]["funding_rounds"]["items"]
-				for item in funding_rounds_items:
-					if item.has_key("properties"):
-						properties = item["properties"]
-						if properties.has_key("series"):
-							series_values = properties["series"]
-							if series_values in ["C", "D", "E"]:
-								break;
-							if series_values in ["A", "B"]:
-								print "series qualified record found!"
-								get_info(uuid,csv_row)
-								break;
-	except urllib2.HTTPError:
-		'''with open('error.txt', 'a') as filehandle:
-			filehandle=str(filehandle)
-			filehandle.write(url)'''	
-		global error_counter 
-		print "Error Number:%d" %error_counter
-	 	error_counter +=1
-
+				get_info(uuid,csv_row)
 
 
 def get_info(uuid,csv_row):
 	
-	url = "https://api.crunchbase.com/v/3/funding-rounds/%s?user_key=419d2896eaa2ef4a93bff62ae0af51e8"%uuid
+	url = "https://api.crunchbase.com/v/3/snapshot/crunchbase_2013_snapshot.tar.gz?user_key=c63e5095fcc5d3f44c40e234ed2050d3"%uuid
 	url_data = urllib2.urlopen(url)
 	json_obj = json.load(url_data)
 	founder =[]	
